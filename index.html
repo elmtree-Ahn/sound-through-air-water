@@ -50,6 +50,9 @@ main{flex:1;max-width:1100px;width:100%;margin:0 auto;padding:16px}
 .card.on{display:block;animation:pop .5s}
 .stage{display:block;width:100%;max-width:760px;margin:0 auto;border-radius:24px;background:#f7fcff;box-shadow:0 0 0 3px var(--line);overflow:hidden}
 
+#tank{max-width:max(420px,min(760px,calc((100vh - 270px)*1.333)))}
+#chamber{max-width:max(420px,min(760px,calc((100vh - 350px)*1.647)))}
+
 /* 1 물 밖과 물속 */
 .ins{cursor:grab;touch-action:none}
 .ins.drag{cursor:grabbing}
@@ -58,7 +61,7 @@ main{flex:1;max-width:1100px;width:100%;margin:0 auto;padding:16px}
 .ear{transform-box:fill-box;transform-origin:center}
 .ear.big{animation:earb .5s}
 .ear.small{animation:ears .5s}
-.pop{opacity:0;transition:opacity .3s;pointer-events:none}
+.pop{paint-order:stroke;stroke:#f7fcff;stroke-width:5px;opacity:0;transition:opacity .3s;pointer-events:none}
 .pop.on{opacity:1}
 .chips{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:760px;margin:12px auto 0}
 .chip{background:#f4fbff;border-radius:18px;box-shadow:0 0 0 3px var(--line);padding:10px 12px;text-align:center;font-size:clamp(16px,2.3vw,21px);line-height:1.3;word-break:keep-all}
@@ -172,8 +175,8 @@ footer{background:var(--navy);padding:16px;text-align:center;font-size:17px;colo
     <text x="565" y="240" font-size="24" fill="#14305c" text-anchor="middle">귀</text>
     <text x="565" y="278" font-size="20" fill="#64748a" text-anchor="middle">들린 소리</text>
     <g id="meter"></g>
-    <text class="pop" id="popAir" x="270" y="128" font-size="24" fill="#d2660c" text-anchor="middle">공기를 지나 귀까지 가요</text>
-    <text class="pop" id="popWater" x="260" y="218" font-size="24" fill="#d2660c" text-anchor="middle">물 표면에서 대부분 되돌아가요</text>
+    <text class="pop" id="popAir" x="250" y="132" font-size="24" fill="#d2660c" text-anchor="middle">공기를 지나 귀까지 가요</text>
+    <text class="pop" id="popWater" x="250" y="132" font-size="24" fill="#d2660c" text-anchor="middle">물 표면에서 대부분 되돌아가요</text>
     <g id="insts"></g>
   </svg>
   <div class="chips">
@@ -309,9 +312,9 @@ $('#share').onclick=async()=>{
 /* ---------- 1 물 밖과 물속 ---------- */
 const SURF=230, EAR=[565,170];
 const INST=[
-  {n:'캐스터네츠',x:75,art:`<ellipse cy="-9" rx="30" ry="17" fill="#e4572e" stroke="#14305c" stroke-width="3"/><ellipse cy="9" rx="30" ry="17" fill="#ff8a2a" stroke="#14305c" stroke-width="3"/><path d="M-30,0H-40" stroke="#14305c" stroke-width="4"/>`},
-  {n:'트라이앵글',x:205,art:`<path d="M-4,-28L-30,20H30L6,-22" fill="none" stroke="#14305c" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/><path d="M26,-30L4,2" stroke="#d2660c" stroke-width="5" stroke-linecap="round"/>`},
-  {n:'숟가락',x:335,art:`<ellipse cx="0" cy="-16" rx="13" ry="18" fill="#c8d4e0" stroke="#14305c" stroke-width="3"/><path d="M0,2V30" stroke="#14305c" stroke-width="7" stroke-linecap="round"/>`}
+  {n:'캐스터네츠',o:'캐스터네츠를',x:75,art:`<ellipse cy="-9" rx="30" ry="17" fill="#e4572e" stroke="#14305c" stroke-width="3"/><ellipse cy="9" rx="30" ry="17" fill="#ff8a2a" stroke="#14305c" stroke-width="3"/><path d="M-30,0H-40" stroke="#14305c" stroke-width="4"/>`},
+  {n:'트라이앵글',o:'트라이앵글을',x:205,art:`<path d="M-4,-28L-30,20H30L6,-22" fill="none" stroke="#14305c" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/><path d="M26,-30L4,2" stroke="#d2660c" stroke-width="5" stroke-linecap="round"/>`},
+  {n:'숟가락',o:'숟가락을',x:335,art:`<ellipse cx="0" cy="-16" rx="13" ry="18" fill="#c8d4e0" stroke="#14305c" stroke-width="3"/><path d="M0,2V30" stroke="#14305c" stroke-width="7" stroke-linecap="round"/>`}
 ];
 const HOME_Y=46;
 const insG=$('#insts'), ringsG=$('#rings'), tank=$('#tank');
@@ -340,15 +343,15 @@ function insUp(e){
   if(!ins) return; const {g,i,moved}=ins; ins=null; g.classList.remove('drag');
   if(!moved){ if(e.type==='pointerup') tapInst(i); return; }
   const p=svgPt(e), m=INST[i];
-  if(p.y>108&&p.y<SURF){ place(i,clamp(p.x,55,480),clamp(p.y,135,178),'air'); $('#m0').textContent=`${m.n}를 물 위에 놓았어요. 톡 쳐 보세요!`; tone(520,.1,.12,'triangle'); }
-  else if(p.y>=SURF&&p.x>30&&p.x<490){ place(i,clamp(p.x,75,445),clamp(p.y,280,405),'water'); $('#m0').textContent=`${m.n}를 물속에 넣었어요. 톡 쳐 보세요!`; tone(420,.1,.12,'triangle'); }
+  if(p.y>108&&p.y<SURF){ place(i,clamp(p.x,55,480),clamp(p.y,165,178),'air'); $('#m0').textContent=`${m.o} 물 위에 놓았어요. 톡 쳐 보세요!`; tone(520,.1,.12,'triangle'); }
+  else if(p.y>=SURF&&p.x>30&&p.x<490){ place(i,clamp(p.x,75,445),clamp(p.y,280,405),'water'); $('#m0').textContent=`${m.o} 물속에 넣었어요. 톡 쳐 보세요!`; tone(420,.1,.12,'triangle'); }
   else { place(i,m.x,HOME_Y,'home'); $('#m0').textContent='물 위나 물속에 놓아 보세요.'; }
 }
 tank.addEventListener('pointerup',insUp); tank.addEventListener('pointercancel',insUp);
 
 function tapInst(i){
   const m=INST[i];
-  if(m.zone==='home'){ $('#m0').textContent=`${m.n}를 끌어서 물 위나 물속에 먼저 놓아 보세요.`; return; }
+  if(m.zone==='home'){ $('#m0').textContent=`${m.o} 끌어서 물 위나 물속에 먼저 놓아 보세요.`; return; }
   const wet=m.zone==='water';
   strike(i,wet);
   m.g.classList.remove('hit'); void m.g.getBBox(); m.g.classList.add('hit'); setTimeout(()=>m.g.classList.remove('hit'),320);

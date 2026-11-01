@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>소리는 무엇을 지나 전달될까? | 어게인 실험과학 수학학원</title>
+<meta name="description" content="손으로 만지며 알아보는 소리 전달 — 물 밖과 물속, 공기를 뺀 통, 우주에서 소리는 어떻게 될까?">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#14305c; --navy-d:#0b1f40; --water:#2f9fe0; --water-d:#1a78b5; --sky:#e4f4fd; --sky2:#bfe4fb; --line:#d3e7f5;
+  --orange:#ff8a2a; --orange-d:#d2660c; --orange-s:#fff0e0;
+  --red:#ff2d3f; --ink:#22344f; --sub:#64748a; --mint:#dcf5ea; --mint2:#8fdcb8;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;color:var(--ink);font-family:"Noto Sans KR",system-ui,sans-serif;font-weight:500;background:#fff}
+body{min-height:100vh;display:flex;flex-direction:column;-webkit-user-select:none;user-select:none;overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-action:manipulation}
+header,nav,.bbtn,.msg,.card,.quiz,footer,.scard,.bin,.meter,.marks,.chip,svg text{font-family:"Jua",sans-serif}
+
+.bbtn{font-size:22px;min-height:64px;min-width:140px;padding:10px 26px;color:#fff;background:var(--water);border-radius:999px;
+  box-shadow:inset 0 -6px 0 rgba(0,0,0,.12),0 5px 0 var(--water-d);word-break:keep-all}
+.bbtn:active{transform:translateY(3px)}
+.bbtn.orange{background:var(--orange);box-shadow:inset 0 -6px 0 rgba(0,0,0,.1),0 5px 0 var(--orange-d)}
+.bbtn.white{background:#fff;color:var(--navy);box-shadow:inset 0 -6px 0 rgba(0,0,0,.05),0 5px 0 var(--line);border:3px solid var(--sky2)}
+
+header{position:sticky;top:0;z-index:30;background:#fff;box-shadow:0 3px 0 var(--line);padding:10px 16px}
+.head-in{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.titles{flex:1;min-width:0}
+h1{margin:0;font-weight:400;font-size:clamp(19px,3.4vw,30px);color:var(--navy);line-height:1.2;word-break:keep-all}
+.sub{font-size:clamp(16px,2.4vw,22px);color:var(--orange-d);line-height:1.25;word-break:keep-all}
+.share{min-width:0;font-size:18px;min-height:54px;padding:8px 22px;flex:none}
+
+nav{max-width:1100px;width:100%;margin:14px auto 0;padding:0 16px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tab{position:relative;min-height:66px;border-radius:20px;background:var(--sky);font-size:clamp(15px,2.1vw,20px);line-height:1.2;padding:6px;
+  border:3px solid transparent;word-break:keep-all;text-align:center}
+.tab.on{background:var(--orange-s);border-color:var(--orange);color:var(--orange-d)}
+.tab .star{position:absolute;top:-12px;right:-2px;font-size:24px;color:#ffb800;display:none}
+.tab.done .star{display:block;animation:pop .5s}
+
+main{flex:1;max-width:1100px;width:100%;margin:0 auto;padding:16px}
+.panel{display:none}
+.panel.on{display:block;animation:fadein .3s}
+.msg{background:var(--sky);border-radius:20px;padding:12px 18px;font-size:clamp(18px,2.4vw,23px);line-height:1.45;word-break:keep-all;margin-bottom:12px;min-height:58px}
+.row{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.card{display:none;margin:16px auto 0;max-width:880px;border-radius:24px;background:var(--mint);border:4px solid var(--mint2);padding:16px 20px;
+  font-size:clamp(20px,2.7vw,26px);text-align:center;line-height:1.5;color:#1f6b4b;word-break:keep-all}
+.card.on{display:block;animation:pop .5s}
+.stage{display:block;width:100%;max-width:760px;margin:0 auto;border-radius:24px;background:#f7fcff;box-shadow:0 0 0 3px var(--line);overflow:hidden}
+
+/* 1 물 밖과 물속 */
+.ins{cursor:grab;touch-action:none}
+.ins.drag{cursor:grabbing}
+.ins .art{transform-box:fill-box;transform-origin:center}
+.ins.hit .art{animation:hitw .3s}
+.ear{transform-box:fill-box;transform-origin:center}
+.ear.big{animation:earb .5s}
+.ear.small{animation:ears .5s}
+.pop{opacity:0;transition:opacity .3s;pointer-events:none}
+.pop.on{opacity:1}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:760px;margin:12px auto 0}
+.chip{background:#f4fbff;border-radius:18px;box-shadow:0 0 0 3px var(--line);padding:10px 12px;text-align:center;font-size:clamp(16px,2.3vw,21px);line-height:1.3;word-break:keep-all}
+.chip b{display:block;font-weight:400;color:var(--orange-d);font-size:1.15em}
+.chip.ok{box-shadow:0 0 0 4px var(--mint2);background:#f1fbf6}
+
+/* 2 공기 빼기 */
+.meter{max-width:760px;margin:0 auto 12px;background:var(--navy);border-radius:22px;padding:10px 14px;color:#fff;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.meter .scr{background:#d9f2c4;color:#24402a;border-radius:14px;padding:4px 16px;font-size:clamp(34px,6vw,50px);min-width:150px;text-align:center}
+.meter .scr small{font-size:.55em}
+.meter .cnt{font-size:clamp(20px,3vw,28px)}
+.marks{position:relative;max-width:720px;margin:18px auto 0;height:96px}
+.marks .bar{position:absolute;left:0;right:0;top:4px;height:16px;border-radius:99px;background:var(--sky);overflow:hidden}
+.marks .fill{height:100%;width:0;background:var(--orange);transition:width .15s}
+.mark{position:absolute;top:0;text-align:center;font-size:clamp(16px,2.3vw,20px);line-height:1.25;color:var(--sub);transform:translateX(-50%);white-space:nowrap}
+.mark::before{content:"";display:block;width:4px;height:26px;margin:0 auto 4px;background:var(--navy);border-radius:2px;position:relative;z-index:1}
+.mark.first{transform:none;text-align:left}.mark.first::before{margin-left:0}
+.mark.last{transform:translateX(-100%);text-align:right}.mark.last::before{margin-right:0}
+.mark b{display:block;font-weight:400;color:var(--orange-d);min-height:1.25em}
+.mark.on{color:var(--navy)}
+#pump{cursor:pointer;touch-action:none}
+#rod{transition:transform .1s}
+#pump.down #rod{transform:translateY(58px)}
+.dot{animation:wig 1.2s ease-in-out infinite alternate}
+.nt{animation:rise 1.2s linear infinite}
+
+/* 3 어디에서 들릴까 */
+.pool{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;max-width:880px;margin:0 auto 14px;min-height:150px;padding:10px;border-radius:20px;background:var(--sky)}
+.scard{position:relative;z-index:2;flex:0 1 190px;min-height:128px;border-radius:18px;background:#fff;border:3px solid var(--orange);color:var(--navy);
+  font-size:clamp(17px,2.4vw,23px);line-height:1.25;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8px;word-break:keep-all;
+  box-shadow:0 4px 0 var(--orange-d);touch-action:none;cursor:grab}
+.scard i{font-style:normal;font-size:44px;line-height:1.2}
+.scard.drag{z-index:50;cursor:grabbing;box-shadow:0 10px 18px rgba(0,0,0,.2)}
+.scard.back{animation:shake .4s}
+.scard.set{cursor:default;border-color:var(--mint2);box-shadow:0 4px 0 var(--mint2);flex:1 1 130px;max-width:190px}
+.bins{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:880px;margin:0 auto}
+.bin{min-height:220px;border:4px dashed var(--water);border-radius:22px;background:#f4fbff;padding:10px;text-align:center;font-size:clamp(18px,2.6vw,25px);line-height:1.3;word-break:keep-all;color:var(--navy)}
+.bin.no{border-color:var(--navy);background:#f1f3f8}
+.bin.hot{background:var(--orange-s);border-color:var(--orange)}
+.bin .got{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px}
+
+/* 4 OX */
+.quiz{max-width:820px;margin:0 auto;text-align:center}
+.score{font-size:22px;color:var(--sub)}
+.score b{font-weight:400;color:var(--orange-d);font-size:1.3em}
+.q{background:var(--sky);border-radius:28px;padding:28px 20px;margin:12px 0;font-size:clamp(24px,3.6vw,34px);line-height:1.4;word-break:keep-all;min-height:150px;display:grid;place-items:center}
+.ox{display:flex;gap:20px;justify-content:center}
+.ox button{width:min(42%,220px);aspect-ratio:1.3;border-radius:32px;font-size:clamp(70px,13vw,110px);line-height:1;color:#fff}
+.ox .o{background:var(--water);box-shadow:0 8px 0 var(--water-d)}
+.ox .x{background:var(--red);box-shadow:0 8px 0 #b81426}
+.ox button:active{transform:translateY(4px)}
+.ox button:disabled{opacity:.4}
+.fb{min-height:70px;margin-top:16px;font-size:clamp(20px,2.8vw,26px);line-height:1.4;word-break:keep-all}
+.fb.good{color:#1f8a57}.fb.bad{color:#c8283a}
+
+footer{background:var(--navy);padding:16px;text-align:center;font-size:17px;color:#fff;line-height:1.6}
+.toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%);background:var(--ink);color:#fff;font-family:"Jua",sans-serif;font-size:20px;padding:12px 26px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:99;white-space:nowrap}
+.toast.on{opacity:1}
+.conf{position:fixed;top:-20px;width:14px;height:14px;z-index:98;pointer-events:none;animation:fall linear forwards}
+.spark{position:fixed;z-index:98;pointer-events:none;font-size:26px;color:#ffc400;animation:spark .8s ease-out forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+@keyframes spark{from{transform:translate(0,0) scale(.4);opacity:1}to{transform:translate(var(--dx),var(--dy)) scale(1.2);opacity:0}}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@keyframes wig{from{transform:translateX(-3px)}to{transform:translateX(3px)}}
+@keyframes hitw{25%{transform:rotate(-14deg)}75%{transform:rotate(14deg)}}
+@keyframes earb{50%{transform:scale(1.4)}}
+@keyframes ears{50%{transform:scale(1.08)}}
+@keyframes rise{from{transform:translateY(0);opacity:1}to{transform:translateY(-44px);opacity:0}}
+@media (max-width:700px){
+  .bbtn{font-size:19px;min-width:0;padding:10px 20px}
+  .share{font-size:16px;padding:8px 14px}
+  .marks{height:92px}
+}
+</style>
+</head>
+<body>
+<header><div class="head-in">
+  <div class="titles"><h1>어게인 실험과학 수학학원</h1><div class="sub">소리는 무엇을 지나 전달될까?</div></div>
+  <button class="bbtn orange share" id="share">공유하기</button>
+</div></header>
+
+<nav>
+  <button class="tab on" data-t="0">물 밖과 물속<span class="star">★</span></button>
+  <button class="tab" data-t="1">공기 빼기<span class="star">★</span></button>
+  <button class="tab" data-t="2">어디에서 들릴까<span class="star">★</span></button>
+  <button class="tab" data-t="3">OX 퀴즈<span class="star">★</span></button>
+</nav>
+
+<main>
+<!-- 1 물 밖과 물속 -->
+<section class="panel on">
+  <div class="msg" id="m0">악기를 끌어서 물 위나 물속에 놓고, 톡 쳐 보세요. 귀에 어떻게 들릴까요?</div>
+  <svg class="stage" id="tank" viewBox="0 0 640 480" role="img" aria-label="물통과 악기, 물통 밖의 귀">
+    <defs>
+      <linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9dcf8"/><stop offset="1" stop-color="#4fb0e8"/></linearGradient>
+      <clipPath id="clipAir"><path d="M0,0H640V480H490V230H30V480H0Z"/></clipPath>
+      <clipPath id="clipWater"><rect x="30" y="230" width="460" height="234"/></clipPath>
+    </defs>
+    <rect x="10" y="6" width="412" height="102" rx="18" fill="#fff" stroke="#d3e7f5" stroke-width="3"/>
+    <rect x="30" y="230" width="460" height="234" fill="url(#wg)"/>
+    <path d="M30,165V464H490V165" fill="none" stroke="#14305c" stroke-width="7" stroke-linejoin="round"/>
+    <text x="448" y="452" font-size="24" fill="#14305c" text-anchor="middle">물</text>
+    <text x="456" y="150" font-size="24" fill="#64748a" text-anchor="middle">공기</text>
+    <g id="rings" fill="none" pointer-events="none"></g>
+    <g class="ear" id="ear" transform="translate(565,170)">
+      <path d="M-18,10C-30,-30-5,-48,15,-40C38,-30,30,0,15,12C5,22,8,36-6,38C-14,39-17,30-18,10Z" fill="#ffd9b8" stroke="#14305c" stroke-width="4"/>
+      <path d="M-6,4C-12,-20,4,-30,14,-22C20,-14,14,-4,6,0" fill="none" stroke="#14305c" stroke-width="4" stroke-linecap="round"/>
+    </g>
+    <text x="565" y="240" font-size="24" fill="#14305c" text-anchor="middle">귀</text>
+    <text x="565" y="278" font-size="20" fill="#64748a" text-anchor="middle">들린 소리</text>
+    <g id="meter"></g>
+    <text class="pop" id="popAir" x="270" y="128" font-size="24" fill="#d2660c" text-anchor="middle">공기를 지나 귀까지 가요</text>
+    <text class="pop" id="popWater" x="260" y="218" font-size="24" fill="#d2660c" text-anchor="middle">물 표면에서 대부분 되돌아가요</text>
+    <g id="insts"></g>
+  </svg>
+  <div class="chips">
+    <div class="chip" id="chA">물 밖에서 친 소리<b>아직 안 쳤어요</b></div>
+    <div class="chip" id="chW">물속에서 친 소리<b>아직 안 쳤어요</b></div>
+  </div>
+  <div class="row"><button class="bbtn white" id="reset1">악기 다시 놓기</button></div>
+  <div class="card" id="c0">소리는 공기도 물도 지나요. 물 표면에서 대부분 되돌아가 작게 들려요!</div>
+</section>
+
+<!-- 2 공기 빼기 -->
+<section class="panel">
+  <div class="msg" id="m1">음악을 켜고 펌프를 눌러 보세요. 펌프를 누를 때마다 통 속 공기가 조금씩 빠져나가요. 꾹 누르고 있으면 계속 펌프질해요.</div>
+  <div class="meter"><div class="scr"><span id="db">68</span> <small>dB</small></div><div class="cnt">펌프 <span id="pc">0</span>번</div></div>
+  <svg class="stage" id="chamber" viewBox="0 0 560 340" role="img" aria-label="공기를 빼는 통과 펌프">
+    <path d="M30,300V90Q30,30,90,30H270Q330,30,330,90V300Z" fill="#e4f4fd"/>
+    <g id="dots"></g>
+    <path d="M30,300V90Q30,30,90,30H270Q330,30,330,90V300" fill="none" stroke="#14305c" stroke-width="6"/>
+    <rect x="105" y="264" width="150" height="36" rx="16" fill="#ffe2c4" stroke="#d2660c" stroke-width="3"/>
+    <rect x="148" y="160" width="64" height="104" rx="11" fill="#14305c"/>
+    <rect x="155" y="170" width="50" height="82" rx="4" fill="#bfe4fb"/>
+    <text x="180" y="224" font-size="36" fill="#14305c" text-anchor="middle">♪</text>
+    <g id="notes" display="none" font-size="30" fill="#d2660c" pointer-events="none">
+      <text class="nt" x="130" y="165">♪</text>
+      <text class="nt" x="180" y="150" style="animation-delay:.4s">♫</text>
+      <text class="nt" x="225" y="165" style="animation-delay:.8s">♪</text>
+    </g>
+    <rect x="10" y="300" width="340" height="24" rx="8" fill="#14305c"/>
+    <path d="M350,312H450" stroke="#14305c" stroke-width="10" fill="none"/>
+    <g id="pump">
+      <rect x="392" y="0" width="168" height="340" fill="transparent"/>
+      <g id="rod">
+        <rect x="470" y="62" width="12" height="90" fill="#64748a"/>
+        <rect x="426" y="38" width="100" height="26" rx="13" fill="#ff8a2a" stroke="#d2660c" stroke-width="3"/>
+      </g>
+      <rect x="448" y="146" width="56" height="180" rx="8" fill="#2f9fe0" stroke="#14305c" stroke-width="4"/>
+      <text x="476" y="30" font-size="22" fill="#d2660c" text-anchor="middle">펌프 누르기</text>
+    </g>
+  </svg>
+  <div class="marks" id="marks"><div class="bar"><div class="fill" id="fill"></div></div></div>
+  <div class="row">
+    <button class="bbtn white" id="music">음악 켜기</button>
+    <button class="bbtn orange" id="valve">공기 마개 열기</button>
+  </div>
+  <div class="card" id="c1">공기가 적을수록 떨림을 전달할 공기도 적어져 소리가 작아져요!</div>
+</section>
+
+<!-- 3 어디에서 들릴까 -->
+<section class="panel">
+  <div class="msg" id="m2">장면 카드를 끌어서 알맞은 칸에 놓아 보세요.</div>
+  <div class="pool" id="pool"></div>
+  <div class="bins">
+    <div class="bin" data-b="0">소리가 전달돼요<div class="got"></div></div>
+    <div class="bin no" data-b="1">공기가 없어 전달되지 않아요<div class="got"></div></div>
+  </div>
+  <div class="row"><button class="bbtn white" id="reset3">다시 하기</button></div>
+  <div class="card" id="c2">공기가 거의 없어서 우주비행사는 무전기로 말해요!</div>
+</section>
+
+<!-- 4 OX 퀴즈 -->
+<section class="panel">
+  <div class="quiz">
+    <div class="score"><span id="qn">1</span> / 5 번째 문제 · 점수 <b id="sc">0</b>점</div>
+    <div class="q" id="q"></div>
+    <div class="ox" id="ox"><button class="o" data-a="O">O</button><button class="x" data-a="X">X</button></div>
+    <div class="fb" id="qfb"></div>
+    <div class="row"><button class="bbtn" id="next" style="display:none">다음 문제</button></div>
+  </div>
+</section>
+</main>
+
+<footer>어게인 실험과학 수학학원<br>교육문의 010.2976.5774</footer>
+<div class="toast" id="toast">주소가 복사됐어요</div>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const el=(n,a,p)=>{ const e=document.createElementNS(NS,n); for(const k in a) e.setAttribute(k,a[k]); if(p) p.appendChild(e); return e; };
+
+/* ---------- 소리 ---------- */
+let ac, wetBus;
+function audio(){ if(!ac){const A=window.AudioContext||window.webkitAudioContext; if(A) ac=new A();} if(ac&&ac.state==='suspended') ac.resume(); return ac; }
+function tone(freq,dur,vol,type='sine',when=0,freqEnd,attack=0.03,dest){
+  const a=audio(); if(!a) return;
+  const o=a.createOscillator(), g=a.createGain(), t=a.currentTime+when;
+  o.type=type; o.frequency.setValueAtTime(freq,t); if(freqEnd) o.frequency.exponentialRampToValueAtTime(freqEnd,t+dur);
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+attack); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(dest||a.destination); o.start(t); o.stop(t+dur+0.05);
+}
+const cheer=()=>[523,659,784,1047].forEach((f,i)=>tone(f,.3,.2,'triangle',i*.11));
+const boo=()=>tone(220,.35,.15,'sawtooth',0,140);
+// 물속 소리는 작고 먹먹하게
+function strike(kind,wet){
+  const a=audio(); if(!a) return;
+  if(!wetBus){ wetBus=a.createBiquadFilter(); wetBus.type='lowpass'; wetBus.frequency.value=900; wetBus.connect(a.destination); }
+  const k=wet?.3:1, d=wet?wetBus:a.destination;
+  if(kind===0){ tone(1500,.07,.4*k,'square',0,700,.003,d); tone(1300,.07,.35*k,'square',.11,650,.003,d); }
+  if(kind===1){ tone(2600,1.5,.25*k,'sine',0,0,.003,d); tone(4100,1,.1*k,'sine',0,0,.003,d); tone(6300,.6,.05*k,'sine',0,0,.003,d); }
+  if(kind===2){ tone(1700,.4,.3*k,'sine',0,0,.003,d); tone(3900,.25,.12*k,'sine',0,0,.003,d); }
+}
+
+/* ---------- 보상 ---------- */
+function confetti(){
+  const cols=['#14305c','#ff8a2a','#2f9fe0','#ffd23f','#8fdcb8'];
+  for(let i=0;i<60;i++){ const d=document.createElement('div'); d.className='conf';
+    d.style.left=Math.random()*100+'vw'; d.style.background=cols[i%5]; d.style.borderRadius=i%2?'50%':'3px';
+    d.style.animationDuration=1.4+Math.random()*1.6+'s'; d.style.animationDelay=Math.random()*.4+'s';
+    document.body.appendChild(d); setTimeout(()=>d.remove(),3600); }
+}
+function sparkle(node){
+  const r=node.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
+  for(let i=0;i<8;i++){ const s=document.createElement('div'); s.className='spark'; s.textContent='✦';
+    const a=i/8*6.28; s.style.left=cx-10+'px'; s.style.top=cy-14+'px';
+    s.style.setProperty('--dx',Math.cos(a)*60+'px'); s.style.setProperty('--dy',Math.sin(a)*60+'px');
+    document.body.appendChild(s); setTimeout(()=>s.remove(),900); }
+}
+const tabs=$$('.tab'), panels=$$('.panel');
+function done(i){ const c=$('#c'+i); if(c) c.classList.add('on'); if(tabs[i].classList.contains('done')) return; tabs[i].classList.add('done'); confetti(); cheer(); }
+
+/* ---------- 탭 ---------- */
+tabs.forEach(b=>b.onclick=()=>{ const cur=+b.dataset.t; tabs.forEach((t,i)=>t.classList.toggle('on',i===cur)); panels.forEach((p,i)=>p.classList.toggle('on',i===cur)); audio(); if(cur!==1) musicOff(); });
+document.addEventListener('visibilitychange',()=>{ if(document.hidden) musicOff(); });
+
+/* ---------- 공유 ---------- */
+$('#share').onclick=async()=>{
+  const url=location.href;
+  if(navigator.share){ try{ await navigator.share({title:document.title,url}); }catch(e){} return; }
+  try{ await navigator.clipboard.writeText(url); }
+  catch(e){ const t=document.createElement('textarea'); t.value=url; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); }
+  const t=$('#toast'); t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),1800);
+};
+
+/* ---------- 1 물 밖과 물속 ---------- */
+const SURF=230, EAR=[565,170];
+const INST=[
+  {n:'캐스터네츠',x:75,art:`<ellipse cy="-9" rx="30" ry="17" fill="#e4572e" stroke="#14305c" stroke-width="3"/><ellipse cy="9" rx="30" ry="17" fill="#ff8a2a" stroke="#14305c" stroke-width="3"/><path d="M-30,0H-40" stroke="#14305c" stroke-width="4"/>`},
+  {n:'트라이앵글',x:205,art:`<path d="M-4,-28L-30,20H30L6,-22" fill="none" stroke="#14305c" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/><path d="M26,-30L4,2" stroke="#d2660c" stroke-width="5" stroke-linecap="round"/>`},
+  {n:'숟가락',x:335,art:`<ellipse cx="0" cy="-16" rx="13" ry="18" fill="#c8d4e0" stroke="#14305c" stroke-width="3"/><path d="M0,2V30" stroke="#14305c" stroke-width="7" stroke-linecap="round"/>`}
+];
+const HOME_Y=46;
+const insG=$('#insts'), ringsG=$('#rings'), tank=$('#tank');
+const heard={air:false,water:false};
+INST.forEach((m,i)=>{
+  const g=el('g',{class:'ins','data-i':i},insG);
+  g.innerHTML=`<circle r="52" fill="transparent"/><g class="art">${m.art}</g><text y="52" font-size="20" fill="#14305c" text-anchor="middle">${m.n}</text>`;
+  m.g=g; place(i,m.x,HOME_Y,'home');
+});
+function place(i,x,y,zone){ const m=INST[i]; m.cx=x; m.cy=y; m.zone=zone; m.g.setAttribute('transform',`translate(${x},${y})`); }
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+function svgPt(e){ const p=new DOMPoint(e.clientX,e.clientY).matrixTransform(tank.getScreenCTM().inverse()); return p; }
+let ins=null;
+tank.addEventListener('pointerdown',e=>{
+  const g=e.target.closest('.ins'); if(!g) return;
+  e.preventDefault(); audio(); g.setPointerCapture(e.pointerId); insG.appendChild(g);
+  ins={g,i:+g.dataset.i,x:e.clientX,y:e.clientY,moved:false};
+});
+tank.addEventListener('pointermove',e=>{
+  if(!ins) return;
+  if(!ins.moved&&Math.hypot(e.clientX-ins.x,e.clientY-ins.y)<10) return;
+  ins.moved=true; ins.g.classList.add('drag');
+  const p=svgPt(e); ins.g.setAttribute('transform',`translate(${clamp(p.x,20,620)},${clamp(p.y,20,460)})`);
+});
+function insUp(e){
+  if(!ins) return; const {g,i,moved}=ins; ins=null; g.classList.remove('drag');
+  if(!moved){ if(e.type==='pointerup') tapInst(i); return; }
+  const p=svgPt(e), m=INST[i];
+  if(p.y>108&&p.y<SURF){ place(i,clamp(p.x,55,480),clamp(p.y,135,178),'air'); $('#m0').textContent=`${m.n}를 물 위에 놓았어요. 톡 쳐 보세요!`; tone(520,.1,.12,'triangle'); }
+  else if(p.y>=SURF&&p.x>30&&p.x<490){ place(i,clamp(p.x,75,445),clamp(p.y,280,405),'water'); $('#m0').textContent=`${m.n}를 물속에 넣었어요. 톡 쳐 보세요!`; tone(420,.1,.12,'triangle'); }
+  else { place(i,m.x,HOME_Y,'home'); $('#m0').textContent='물 위나 물속에 놓아 보세요.'; }
+}
+tank.addEventListener('pointerup',insUp); tank.addEventListener('pointercancel',insUp);
+
+function tapInst(i){
+  const m=INST[i];
+  if(m.zone==='home'){ $('#m0').textContent=`${m.n}를 끌어서 물 위나 물속에 먼저 놓아 보세요.`; return; }
+  const wet=m.zone==='water';
+  strike(i,wet);
+  m.g.classList.remove('hit'); void m.g.getBBox(); m.g.classList.add('hit'); setTimeout(()=>m.g.classList.remove('hit'),320);
+  const dist=Math.hypot(EAR[0]-m.cx,EAR[1]-m.cy), delay=dist/RS*1000;
+  if(wet){
+    for(let k=0;k<4;k++){
+      addRing(m.cx,m.cy,'clipWater','#14305c',4,k*.2,640,.9);
+      addRing(m.cx,2*SURF-m.cy,'clipWater','#ff8a2a',4,k*.2,760,1);
+    }
+    addRing(m.cx,m.cy,'clipAir','#ff8a2a',2,0,dist+20,.7,'6 8');   // 표면을 뚫고 나온 소리는 적다
+    popup('#popWater');
+    setTimeout(()=>hearEar(1),delay);
+    heard.water=true; const c=$('#chW'); c.classList.add('ok'); c.querySelector('b').textContent='작게 들려요';
+    $('#m0').textContent='물속에서도 소리가 퍼져요. 그런데 대부분 물 표면에서 되돌아가고, 조금만 귀에 닿아요.';
+  } else {
+    for(let k=0;k<4;k++) addRing(m.cx,m.cy,'clipAir','#ff8a2a',5,k*.18,dist+60,1);
+    popup('#popAir');
+    setTimeout(()=>hearEar(5),delay);
+    heard.air=true; const c=$('#chA'); c.classList.add('ok'); c.querySelector('b').textContent='크게 들려요';
+    $('#m0').textContent='소리가 공기를 지나 귀까지 왔어요. 크게 들려요!';
+  }
+  if(heard.air&&heard.water){ if(!tabs[0].classList.contains('done')) setTimeout(()=>sparkle($('#ear')),delay); done(0); }
+  else $('#m0').textContent+=wet?' 이번엔 물 위에서도 쳐 보세요.':' 이번엔 물속에서도 쳐 보세요.';
+}
+const popT={};
+function popup(s){ const p=$(s); p.classList.add('on'); clearTimeout(popT[s]); popT[s]=setTimeout(()=>p.classList.remove('on'),1800); }
+
+// 소리 고리: 펼쳐지는 원을 공기/물 영역으로 잘라 보여 준다. 물 표면 반사는 위로 비친 중심에서 퍼지는 원.
+const RS=300, rings=[]; let raf=0;
+function addRing(cx,cy,clip,color,w,when,max,op,dash){
+  const c=el('circle',{cx,cy,r:0,stroke:color,'stroke-width':w,'clip-path':`url(#${clip})`,opacity:0},ringsG);
+  if(dash) c.setAttribute('stroke-dasharray',dash);
+  rings.push({c,t0:performance.now()+when*1000,max,op});
+  if(!raf) raf=requestAnimationFrame(tick);
+}
+function tick(now){
+  for(let i=rings.length-1;i>=0;i--){ const q=rings[i], r=(now-q.t0)/1000*RS;
+    if(r<0) continue;
+    if(r>q.max){ q.c.remove(); rings.splice(i,1); continue; }
+    q.c.setAttribute('r',r); q.c.setAttribute('opacity',q.op*(1-.7*r/q.max));
+  }
+  raf=rings.length?requestAnimationFrame(tick):0;
+}
+const bars=[0,1,2,3,4].map(i=>el('rect',{x:524+i*17,y:360-i*14-14,width:14,height:14+i*14,rx:3,fill:'#d3e7f5'},$('#meter')));
+let barT;
+function hearEar(n){
+  const e=$('#ear'); e.classList.remove('big','small'); void e.getBBox(); e.classList.add(n>2?'big':'small');
+  bars.forEach((b,i)=>b.setAttribute('fill',i<n?'#ff8a2a':'#d3e7f5'));
+  clearTimeout(barT); barT=setTimeout(()=>bars.forEach(b=>b.setAttribute('fill','#d3e7f5')),1800);
+}
+$('#reset1').onclick=()=>{
+  INST.forEach((m,i)=>place(i,m.x,HOME_Y,'home')); heard.air=heard.water=false;
+  ['#chA','#chW'].forEach(s=>{ const c=$(s); c.classList.remove('ok'); c.querySelector('b').textContent='아직 안 쳤어요'; });
+  $('#c0').classList.remove('on'); $('#m0').textContent='악기를 끌어서 물 위나 물속에 놓고, 톡 쳐 보세요. 귀에 어떻게 들릴까요?';
+};
+
+/* ---------- 2 공기 빼기 ---------- */
+// 손 펌프로는 공기를 다 못 빼고 통 벽도 떨리므로 소리가 0이 되지 않는다(교재 지도 메모와 같음).
+const MAXP=50, MARKS=[0,10,30,50], DOTS=60;
+const dbOf=p=>50+18*Math.exp(-p/18);
+const dotsG=$('#dots'), dots=[];
+for(let i=0;i<DOTS;i++) { const d=el('circle',{cx:50+Math.random()*260,cy:52+Math.random()*205,r:6,fill:'#2f9fe0',class:'dot'},dotsG); d.style.animationDelay=-Math.random()*1.2+'s'; dots.push(d); }
+const marks=$('#marks');
+MARKS.forEach((m,i)=>{ const d=document.createElement('div'); d.className='mark'+(i===0?' first':i===3?' last':''); d.style.left=m/MAXP*100+'%'; d.innerHTML=`${m}번<b></b>`; marks.appendChild(d); d.id='mk'+m; });
+let pumps=0, refilling=false, musicBus, musicT=0, step=0, reached=false;
+const TUNE=[523,659,784,659,880,784,659,587];
+function musicLevel(){ return .5*Math.pow(10,(dbOf(pumps)-68)/20); }
+function drawAir(){
+  const n=Math.round(6+(DOTS-6)*Math.exp(-pumps/18)), v=dbOf(pumps);
+  dots.forEach((d,i)=>d.setAttribute('display',i<n?'inline':'none'));
+  $('#db').textContent=Math.round(v); $('#pc').textContent=pumps; $('#fill').style.width=pumps/MAXP*100+'%';
+  $('#notes').setAttribute('opacity',(.2+.8*(v-50)/18).toFixed(2));
+  if(MARKS.includes(pumps)&&!refilling){ const k=$('#mk'+pumps); k.classList.add('on'); k.querySelector('b').textContent=Math.round(v)+' dB'; }
+  if(musicBus) musicBus.gain.setTargetAtTime(musicLevel(),ac.currentTime,.08);
+}
+function musicOn(){
+  if(musicT) return; const a=audio(); if(!a) return;
+  if(!musicBus){ musicBus=a.createGain(); musicBus.connect(a.destination); }
+  musicBus.gain.value=musicLevel();
+  const play=()=>tone(TUNE[step++%TUNE.length],.34,.5,'triangle',0,0,.01,musicBus);
+  play(); musicT=setInterval(play,340);
+  $('#music').textContent='음악 끄기'; $('#notes').setAttribute('display','inline');
+}
+function musicOff(){ clearInterval(musicT); musicT=0; $('#music').textContent='음악 켜기'; $('#notes').setAttribute('display','none'); }
+$('#music').onclick=()=>musicT?musicOff():musicOn();
+function pumpOnce(){
+  if(refilling) return;
+  if(pumps>=MAXP){ $('#m1').textContent='50번을 다 눌렀어요. 통 속에 공기가 조금 남아 있고 통 벽도 떨려서 소리가 0이 되지는 않아요. 이제 공기 마개를 열어 보세요.'; return; }
+  musicOn(); pumps++; tone(180,.08,.08,'triangle');
+  if(pumps===MAXP) reached=true;
+  drawAir();
+  if(pumps===MAXP) $('#m1').textContent='50번! 소리가 많이 작아졌어요. 통 속에 공기가 조금 남아 있고 통 벽도 떨려서 0이 되지는 않아요. 이제 공기 마개를 열어 보세요.';
+  else if(MARKS.includes(pumps)) $('#m1').textContent=`${pumps}번! 숫자가 ${Math.round(dbOf(pumps))} 데시벨로 작아졌어요. 계속 눌러 보세요.`;
+  else if(pumps===1) $('#m1').textContent='공기 알갱이가 줄어들어요. 10번, 30번, 50번까지 눌러 보세요.';
+}
+const pumpG=$('#pump'); let holdA=0, holdB=0;
+function pumpStop(){ clearTimeout(holdA); clearInterval(holdB); pumpG.classList.remove('down'); }
+pumpG.addEventListener('pointerdown',e=>{
+  e.preventDefault(); audio(); pumpG.setPointerCapture(e.pointerId); pumpG.classList.add('down'); pumpOnce();
+  holdA=setTimeout(()=>{ holdB=setInterval(pumpOnce,130); },450);
+});
+['pointerup','pointercancel','lostpointercapture'].forEach(t=>pumpG.addEventListener(t,pumpStop));
+$('#valve').onclick=()=>{
+  if(refilling) return;
+  if(pumps===0){ $('#m1').textContent='아직 뺀 공기가 없어요. 펌프를 먼저 눌러 보세요.'; return; }
+  refilling=true; musicOn(); tone(900,.9,.08,'sine',0,300);
+  $('#m1').textContent='공기가 다시 들어가요. 소리를 들어 보세요!';
+  const t=setInterval(()=>{ pumps=Math.max(0,pumps-1); drawAir();
+    if(pumps===0){ clearInterval(t); refilling=false;
+      $('#m1').textContent='공기를 넣으니 소리가 다시 커졌어요!';
+      if(reached){ if(!tabs[1].classList.contains('done')) sparkle($('#chamber')); done(1); } }
+  },30);
+};
+drawAir();
+
+/* ---------- 끌기 (3 탭) ---------- */
+// 누르고 거의 안 움직이면 아무 일 없음, 끌었다 놓으면 onDrop(카드, 놓은 칸)
+function dragify(root,sel,slots,onDrop){
+  let d=null;
+  const slotAt=(x,y)=>slots().find(s=>{ const r=s.getBoundingClientRect(); return x>r.left&&x<r.right&&y>r.top-20&&y<r.bottom+20; });
+  root.addEventListener('pointerdown',e=>{
+    const c=e.target.closest(sel); if(!c) return;
+    e.preventDefault(); audio(); c.setPointerCapture(e.pointerId); d={c,x:e.clientX,y:e.clientY,moved:false};
+  });
+  root.addEventListener('pointermove',e=>{
+    if(!d) return; const dx=e.clientX-d.x, dy=e.clientY-d.y;
+    if(!d.moved&&Math.hypot(dx,dy)<10) return;
+    d.moved=true; d.c.classList.add('drag'); d.c.style.transform=`translate(${dx}px,${dy}px)`;
+    const s=slotAt(e.clientX,e.clientY); slots().forEach(x=>x.classList.toggle('hot',x===s));
+  });
+  const up=e=>{
+    if(!d) return; const {c,moved}=d; d=null;
+    c.classList.remove('drag'); c.style.transform=''; slots().forEach(x=>x.classList.remove('hot'));
+    if(moved) onDrop(c,slotAt(e.clientX,e.clientY));
+  };
+  root.addEventListener('pointerup',up); root.addEventListener('pointercancel',up);
+}
+
+/* ---------- 3 어디에서 들릴까 ---------- */
+const SC=[
+  {n:'공기 속 교실',i:'🏫',b:0,ok:'맞아요! 교실에서는 소리가 공기를 지나 전달돼요.'},
+  {n:'물속 고래',i:'🐋',b:0,ok:'맞아요! 물속에서는 소리가 물을 지나 전달돼요.'},
+  {n:'우주 공간의 우주비행사',i:'🧑‍🚀',b:1,ok:'공기가 거의 없어서 우주비행사는 무전기로 말해요!'}
+];
+const pool=$('#pool'), bins=$$('.bin');
+function reset3(){
+  $('#c2').classList.remove('on'); bins.forEach(b=>b.querySelector('.got').innerHTML='');
+  const o=[0,1,2].sort(()=>Math.random()-.5);
+  pool.innerHTML=o.map(i=>`<div class="scard" data-i="${i}"><i>${SC[i].i}</i>${SC[i].n}</div>`).join('');
+  $('#m2').textContent='장면 카드를 끌어서 알맞은 칸에 놓아 보세요.';
+}
+dragify(panels[2],'.scard:not(.set)',()=>bins,(c,s)=>{
+  if(!s) return;
+  const m=SC[+c.dataset.i];
+  if(+s.dataset.b!==m.b){
+    boo(); c.classList.add('back'); setTimeout(()=>c.classList.remove('back'),400);
+    $('#m2').textContent=m.b===1?'우주에 공기가 있을까요? 다시 생각해 보세요.':`${m.n}에는 떨림을 전달할 것이 있을까요? 다시 생각해 보세요.`;
+    return;
+  }
+  s.querySelector('.got').appendChild(c); c.classList.add('set'); tone(520,.1,.12,'triangle');
+  $('#m2').textContent=m.ok;
+  if(m.b===1) $('#c2').classList.add('on');
+  if(!pool.children.length){ if(!tabs[2].classList.contains('done')) sparkle(s); done(2); }
+});
+$('#reset3').onclick=reset3;
+reset3();
+
+/* ---------- 4 OX 퀴즈 ---------- */
+const QS=[
+ ['소리는 공기를 지나 전달된다','O','악기의 떨림이 공기를 지나 귀까지 와요.'],
+ ['물속에서 친 악기 소리는 물을 지나 전달된다','O','떨림이 물을 지나 퍼져 나가요.'],
+ ['물 밖에 있는 귀에 물속 소리가 작게 들리는 까닭은 물이 떨리지 않기 때문이다','X','물도 떨려요. 물 표면에서 소리가 대부분 되돌아가서 작게 들려요.'],
+ ['통 속 공기를 뺄수록 통 밖으로 나오는 소리는 작아진다','O','떨림을 전달할 공기가 적어져서 소리가 작아져요.'],
+ ['우주에서는 큰 폭발 소리도 공기를 지나 멀리 들린다','X','우주에는 공기가 거의 없어서 소리가 공기를 지나 전달될 수 없어요.']
+];
+let qi=0, score=0;
+function showQ(){
+  $('#ox').style.display=''; $('#qn').textContent=qi+1; $('#sc').textContent=score; $('#q').textContent=QS[qi][0];
+  $('#qfb').textContent=''; $('#qfb').className='fb'; $('#next').style.display='none'; $$('#ox button').forEach(b=>b.disabled=false);
+}
+$$('#ox button').forEach(b=>b.onclick=()=>{
+  const [,ans,why]=QS[qi], ok=b.dataset.a===ans; $$('#ox button').forEach(x=>x.disabled=true);
+  if(ok){ score++; cheer(); sparkle(b); } else boo();
+  $('#sc').textContent=score; $('#qfb').className='fb '+(ok?'good':'bad');
+  $('#qfb').textContent=(ok?'딩동댕! ':'아쉬워요. 정답은 '+ans+'예요. ')+why;
+  $('#next').textContent=qi<4?'다음 문제':'결과 보기'; $('#next').style.display='';
+});
+$('#next').onclick=()=>{
+  if(qi===5){ qi=0; score=0; showQ(); return; }
+  if(++qi<5){ showQ(); return; }
+  $('#q').textContent=`5문제 중 ${score}문제를 맞혔어요!`; $('#ox').style.display='none'; $('#qfb').className='fb good';
+  $('#qfb').textContent=score===5?'완벽해요! 소리 전달 박사님이네요.':score>=3?'잘했어요! 틀린 문제는 앞의 실험으로 다시 확인해 보세요.':'괜찮아요. 앞의 실험을 다시 해 보고 또 도전해요!';
+  $('#next').textContent='다시 하기'; if(score>=4) done(3);
+};
+showQ();
+</script>
+</body>
+</html>
